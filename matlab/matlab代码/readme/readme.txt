@@ -1,0 +1,18 @@
+beamElementStiffnessMatrix.m是梁单元刚度矩阵和质量矩阵
+cableElementStiffnessMatrix.m是梁单元刚度矩阵和质量矩阵
+springElementStiffnessMatrix.m是梁单元刚度矩阵和质量矩阵
+newMark.m是隐式积分算法
+coordinateTransformation.m是单刚到总刚的坐标变化函数
+test.m是一系列动力学的测试函数；
+force.m是施加外载荷用的函数
+
+
+systemStiffnessMatrix.m
+systemStiffnessMatrix2.m
+systemStiffnessMatrix3.m是以前静力学的测试函数，因为调用函数改变了，可能无法直接跑起来。
+
+
+Beam3.m
+newmark2.m 是网上找的例子
+
+其他函数可能不相关

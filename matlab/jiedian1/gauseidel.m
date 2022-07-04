@@ -1,4 +1,4 @@
-%% Gauss-Serdel迭代法的函数文件gauseidel.m：  
+%% Gauss-Serdel迭代法的函数文件：  
 function [y]=gauseidel(A,b,x0)  
 ep=1.0e-6;
 D=diag(diag(A));  

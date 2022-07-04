@@ -321,93 +321,93 @@
 % figure(10);
 % plot(tt,Q,'k','linewidth',0.1);title('外载荷');
 %% 非线性弹簧建模
-% clc;clear;close all;
-% % 参数
-% beamInternal=-100;                                                             %梁内力
-% cableInternal=100;                                                            %索单元内力
-% sumsystemDof=18;                                                            %系统总的自由度数目
-% sumBoundarynodeDof=9;                                                       %边界节点自由度数目
-% sumNode = 4;                                                                %总节点数
-% sumElement = 3;                                                               %总单元数
-% everynodeDOF = 6;                                                             %每节点自由度数
-% sumBC_Displacement = 9;                                                       %位移边界条件的个数
-% LBeam = 400;                                                                  %梁总长度
-% LCable = 400;                                                                 %索总长度
-% LBeamElement=LBeam/1;                                                       %梁单元长度
-% LCableElement=LCable/1;                                                     %索单元长度
-% c1 =0;c2=0;                                                                 %比例阻尼系数：质量系数，刚度系数
-% deltaT=0.001;                                                               %时间步长
-% T=10;                                                                       %总时间
-% % 初始化整体刚度矩阵，质量矩阵，阻尼矩阵
-% K=zeros(sumsystemDof);                                                      %初始化整体刚度矩阵
-% M=zeros(sumsystemDof);                                                      %初始化整体质量矩阵
-% C=zeros(sumsystemDof);                                                      %初始化整体阻尼矩阵
-% %计算单元刚度、质量矩阵
-% [Kebeam,Mebeam]=beamElementStiffnessMatrix(beamInternal,LBeamElement);      %梁单元刚度质量矩阵
-% [Kecable,Mecable]=cableElementStiffnessMatrix(cableInternal,LCableElement); %索单元刚度质量矩阵
-% [Kespring,Mespring]=springElementStiffnessMatrix(1);                        %弹簧单元刚度质量矩阵
-% %坐标转换，将单元矩阵由局部坐标系转换到整体坐标系
-% lambdaBeam=coordinateTransformation(0,0,0,400,0,0,0,300,0);
-% beamCTF=[lambdaBeam,zeros(3),zeros(3),zeros(3);
-%          zeros(3),lambdaBeam,zeros(3),zeros(3);
-%          zeros(3),zeros(3),lambdaBeam,zeros(3);
-%          zeros(3),zeros(3),zeros(3),lambdaBeam;];                           %梁的转换矩阵
-% Kebeam=beamCTF'*Kebeam*beamCTF;                                             %整体坐标系下梁的刚度矩阵
-% Mebeam=beamCTF'*Mebeam*beamCTF;                                             %整体坐标系下梁的刚度矩阵
-% 
-% lambdacable=coordinateTransformation(320,60,0,0,300,0,0,0,0);
-% cableCTF=[lambdacable,zeros(3);
-%           zeros(3),lambdacable;];                                           %索的转换矩阵
-% Kecable=cableCTF'*Kecable*cableCTF;                                         %整体坐标系下索的刚度矩阵
-% Mecable=cableCTF'*Mecable*cableCTF;                                         %整体坐标系下索的刚度矩阵
-% 
-% lambdaSpring=coordinateTransformation(400,0,0,320,60,0,320,0,0);            %弹簧的转换矩阵
-% springCTF=[lambdaSpring,zeros(3);
-%            zeros(3),lambdaSpring;];                                         %弹簧的转换矩阵
-% Kespring=springCTF'*Kespring*springCTF;                                     %整体坐标系下索的刚度矩阵
-% Mespring=springCTF'*Mespring*springCTF;                                     %整体坐标系下索的刚度矩阵
-% %组集整体刚度矩阵、质量矩阵
-% K(1:12,1:12)=K(1:12,1:12)+Kebeam;
-% K(7:9,7:9)=K(7:9,7:9)+Kecable(1:3,1:3);
-% K(7:9,13:15)=K(7:9,13:15)+Kecable(1:3,4:6);
-% K(13:15,7:9)=K(13:15,7:9)+Kecable(4:6,1:3);
-% K(13:15,13:15)=K(13:15,13:15)+Kecable(4:6,4:6);
-% K(13:18,13:18)=K(13:18,13:18)+Kespring;
-% 
-% M(1:12,1:12)=M(1:12,1:12)+Mebeam;
-% M(7:9,7:9)=M(7:9,7:9)+Mecable(1:3,1:3);
-% M(7:9,13:15)=M(7:9,13:15)+Mecable(1:3,4:6);
-% M(13:15,7:9)=M(13:15,7:9)+Mecable(4:6,1:3);
-% M(13:15,13:15)=M(13:15,13:15)+Mecable(4:6,4:6);
-% M(13:18,13:18)=M(13:18,13:18)+Mespring;
-% %计算瑞利阻尼
-% C = c1*M+c2*K;                                                             %比例阻尼
-% %计算除去位移边界后的矩阵，为求解位移场做准备
-% Ka=K(7:15,7:15);                                                           %除去位移边界后的刚度矩阵
-% Ma=M(7:15,7:15);                                                           %除去位移边界后的质量矩阵
-% Ca=C(7:15,7:15);                                                           %除去位移边界后的阻尼矩阵
-% %定义载荷边界条件
-% F = @(t) force(t,sumsystemDof-sumBoundarynodeDof);
-% %newmark方法求解位移、速度、加速度
-% [U,UD,UDD,sumQ]=newMark(Ma,Ka,Ca,F,deltaT,T);
-% Q=sumQ(2,:);
-% % 绘图
-% tt = 0:deltaT:T;                                                            %绘图时间步
-% for i=1:9
-%     dn = U(i,:);    
-%     dV = UD(i,:);    
-%     dA = UDD(i,:);  
-%     
-%     figure(i)
-%     subplot(3,1,1);
-%     plot(tt,dn,'r','linewidth',0.1)
-%     title('位移/转角')
-%     subplot(3,1,2);
-%     plot(tt,dV,'b','linewidth',0.1)
-%     title('速度')
-%     subplot(3,1,3);
-%     plot(tt,dA,'g','linewidth',0.1)
-%     title('加速度')
-% end
-% figure(10);
-% plot(tt,Q,'k','linewidth',0.1);title('外载荷'); 
+clc;clear;close all;
+% 参数
+beamInternal=0;                                                             %梁内力
+cableInternal=0;                                                            %索单元内力
+sumsystemDof=18;                                                            %系统总的自由度数目
+sumBoundarynodeDof=9;                                                       %边界节点自由度数目
+sumNode = 4;                                                                %总节点数
+sumElement = 3;                                                               %总单元数
+everynodeDOF = 6;                                                             %每节点自由度数
+sumBC_Displacement = 9;                                                       %位移边界条件的个数
+LBeam = 400;                                                                  %梁总长度
+LCable = 400;                                                                 %索总长度
+LBeamElement=LBeam/1;                                                       %梁单元长度
+LCableElement=LCable/1;                                                     %索单元长度
+c1 =0.628;c2=0.3;                                                                 %比例阻尼系数：质量系数，刚度系数
+deltaT=0.001;                                                               %时间步长
+T=10;                                                                       %总时间
+% 初始化整体刚度矩阵，质量矩阵，阻尼矩阵
+K=zeros(sumsystemDof);                                                      %初始化整体刚度矩阵
+M=zeros(sumsystemDof);                                                      %初始化整体质量矩阵
+C=zeros(sumsystemDof);                                                      %初始化整体阻尼矩阵
+%计算单元刚度、质量矩阵
+[Kebeam,Mebeam]=beamElementStiffnessMatrix(beamInternal,LBeamElement);      %梁单元刚度质量矩阵
+[Kecable,Mecable]=cableElementStiffnessMatrix(cableInternal,LCableElement); %索单元刚度质量矩阵
+[Kespring,Mespring]=springElementStiffnessMatrix(1);                        %弹簧单元刚度质量矩阵
+%坐标转换，将单元矩阵由局部坐标系转换到整体坐标系
+lambdaBeam=coordinateTransformation(0,0,0,400,0,0,0,300,0);
+beamCTF=[lambdaBeam,zeros(3),zeros(3),zeros(3);
+         zeros(3),lambdaBeam,zeros(3),zeros(3);
+         zeros(3),zeros(3),lambdaBeam,zeros(3);
+         zeros(3),zeros(3),zeros(3),lambdaBeam;];                           %梁的转换矩阵
+Kebeam=beamCTF'*Kebeam*beamCTF;                                             %整体坐标系下梁的刚度矩阵
+Mebeam=beamCTF'*Mebeam*beamCTF;                                             %整体坐标系下梁的刚度矩阵
+
+lambdacable=coordinateTransformation(320,60,0,0,300,0,0,0,0);
+cableCTF=[lambdacable,zeros(3);
+          zeros(3),lambdacable;];                                           %索的转换矩阵
+Kecable=cableCTF'*Kecable*cableCTF;                                         %整体坐标系下索的刚度矩阵
+Mecable=cableCTF'*Mecable*cableCTF;                                         %整体坐标系下索的刚度矩阵
+
+lambdaSpring=coordinateTransformation(400,0,0,320,60,0,320,0,0);            %弹簧的转换矩阵
+springCTF=[lambdaSpring,zeros(3);
+           zeros(3),lambdaSpring;];                                         %弹簧的转换矩阵
+Kespring=springCTF'*Kespring*springCTF;                                     %整体坐标系下索的刚度矩阵
+Mespring=springCTF'*Mespring*springCTF;                                     %整体坐标系下索的刚度矩阵
+%组集整体刚度矩阵、质量矩阵
+K(1:12,1:12)=K(1:12,1:12)+Kebeam;
+K(7:9,7:9)=K(7:9,7:9)+Kecable(1:3,1:3);
+K(7:9,13:15)=K(7:9,13:15)+Kecable(1:3,4:6);
+K(13:15,7:9)=K(13:15,7:9)+Kecable(4:6,1:3);
+K(13:15,13:15)=K(13:15,13:15)+Kecable(4:6,4:6);
+K(13:18,13:18)=K(13:18,13:18)+Kespring;
+
+M(1:12,1:12)=M(1:12,1:12)+Mebeam;
+M(7:9,7:9)=M(7:9,7:9)+Mecable(1:3,1:3);
+M(7:9,13:15)=M(7:9,13:15)+Mecable(1:3,4:6);
+M(13:15,7:9)=M(13:15,7:9)+Mecable(4:6,1:3);
+M(13:15,13:15)=M(13:15,13:15)+Mecable(4:6,4:6);
+M(13:18,13:18)=M(13:18,13:18)+Mespring;
+%计算瑞利阻尼
+C = c1*M+c2*K;                                                             %比例阻尼
+%计算除去位移边界后的矩阵，为求解位移场做准备
+Ka=K(7:15,7:15);                                                           %除去位移边界后的刚度矩阵
+Ma=M(7:15,7:15);                                                           %除去位移边界后的质量矩阵
+Ca=C(7:15,7:15);                                                           %除去位移边界后的阻尼矩阵
+%定义载荷边界条件
+F = @(t) force(t,sumsystemDof-sumBoundarynodeDof);
+%newmark方法求解位移、速度、加速度
+[U,UD,UDD,sumQ]=newMark(Ma,Ka,Ca,F,deltaT,T);
+Q=sumQ(2,:);
+% 绘图
+tt = 0:deltaT:T;                                                            %绘图时间步
+for i=1:9
+    dn = U(i,:);    
+    dV = UD(i,:);    
+    dA = UDD(i,:);  
+    
+    figure(i)
+    subplot(3,1,1);
+    plot(tt,dn,'r','linewidth',0.1)
+    title('位移/转角')
+    subplot(3,1,2);
+    plot(tt,dV,'b','linewidth',0.1)
+    title('速度')
+    subplot(3,1,3);
+    plot(tt,dA,'g','linewidth',0.1)
+    title('加速度')
+end
+figure(10);
+plot(tt,Q,'k','linewidth',0.1);title('外载荷'); 
