@@ -17,7 +17,6 @@ deltaT=0.001;
 [U,UD,UDD,sumQ]=newMark(T,deltaT); 
 
 % 绘图
-
 matlabU = U(2,:);
 matlabUD = UD(2,:);
 matlabUDD = UDD(2,:);
