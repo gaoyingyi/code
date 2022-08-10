@@ -2,6 +2,7 @@
 %输入：Path，INP文件所在的绝对位置
 %输入：Inpfile,Inp文件名，不要包含后缀名
 %输入：cpus,调用cpu个数，需要引号括起来
+%cmd命令：cmd/c abaqus job=test cpus=12 int
 function [outputArgs] = submitinp(Path,InpFile,cpus)
 inputFile=[' abaqus job=',InpFile,' cpus=',cpus];   %无用户子程序
 t0=tic;      %开始计时

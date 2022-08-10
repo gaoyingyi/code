@@ -5,19 +5,19 @@
 function k=beamElementStiffnessMatrix(deltaL,L)
 %% 参数
 global  EBeam muBeam;
-EBeam=350000;%弹性模量mpa
-muBeam=0.3;%泊松比
-r=5;%圆截面半径为5mm
-G=EBeam/(2*(1+muBeam));%计算剪切模量
-D=2*r;%计算截面直径
-A=pi*r^2;%计算截面面积
-Iy=pi*D^4/64;%计算圆截面惯性矩
-Iz=pi*D^4/64;%计算圆截面惯性矩
-Ip=pi*D^4/32;%计算圆截面极惯性矩
-Ay=A/10*9;%y方向有效抗剪面积
-Az=A/10*9;%Z方向有效抗剪面积
-phaY=12*EBeam*Iz/(G*Ay*L^2);%沿单元坐标y方向的横向力剪切影响系数
-phaZ=12*EBeam*Iy/(G*Az*L^2);%沿单元坐标z方向的横向力剪切影响系数
+EBeam=350000;                                                                   %弹性模量mpa
+muBeam=0.3;                                                                     %泊松比
+r=5;                                                                        %圆截面半径为5mm
+G=EBeam/(2*(1+muBeam));                                                             %计算剪切模量
+D=2*r;                                                                      %计算截面直径
+A=pi*r^2;                                                                   %计算截面面积
+Iy=pi*D^4/64;                                                               %计算圆截面惯性矩
+Iz=pi*D^4/64;                                                               %计算圆截面惯性矩
+Ip=pi*D^4/32;                                                               %计算圆截面极惯性矩
+Ay=A/10*9;                                                                  %y方向有效抗剪面积
+Az=A/10*9;                                                                  %Z方向有效抗剪面积
+phaY=12*EBeam*Iz/(G*Ay*L^2);                                                    %沿单元坐标y方向的横向力剪切影响系数
+phaZ=12*EBeam*Iy/(G*Az*L^2);                                                    %沿单元坐标z方向的横向力剪切影响系数
 T=EBeam*A*deltaL/L;
 T=0;
 %% 刚度阵

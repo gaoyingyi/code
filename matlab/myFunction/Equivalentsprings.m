@@ -1,0 +1,31 @@
+%计算替代绳索的等效刚度和应该施加的预应力
+%L:绳索原长
+%r:绳索半径
+%E：弹性模量
+%sigma0：原来的预应力
+%xspring：想替换弹簧的长度
+%输出kspring：替换弹簧的刚度
+%sigma1：在加上替换弹簧后，应在绳索上施加的预应力
+function [kspring,sigma1,F0]=Equivalentsprings(L,r,E,sigma0,xspring)
+    if(~exist('L','var'))
+        L=1000;  
+    end
+    if(~exist('r','var'))
+        r=20;  
+    end
+    if(~exist('E','var'))
+        E=235000;
+    end
+    if(~exist('sigma0','var'))
+        sigma0=1000;  
+    end
+    if(~exist('xspring','var'))
+        xspring=200; 
+    end
+    A=pi*r^2;
+    F0=sigma0*A;
+    kspring=E*A/xspring;
+    F1=L/(L-xspring)*F0;
+    sigma1=F1/A;
+   
+end

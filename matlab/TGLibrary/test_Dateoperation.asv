@@ -1,0 +1,13 @@
+%文件内容修改命令实验
+clc;clear;close all
+fid = fopen('E:\code\matlab\TGLibrary\myData\badpoem.txt');%打开文件
+ftell(fid)%查询当前位置
+tline1 = fgetl(fid)  %读取一行的数据
+ftell(fid)%查询当前位置，返回
+tline2 = fgetl(fid)
+ftell(fid)%查询当前位置
+tline3 = fgetl(fid)
+ftell(fid)%查询当前位置
+fseek(fid,20,'bof');%移动文件到指定的位置，bof指定文件的开头
+fgetl(fid)%查询当前位置
+fclose(fid); %关闭文件
